@@ -129,5 +129,8 @@
       }
     }
   },
-  "defaultProject": "EuroTrains"
+  "defaultProject": "EuroTrains",
+  "cli": {
+    "analytics": false
+  }
 }
