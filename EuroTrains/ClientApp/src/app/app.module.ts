@@ -7,13 +7,15 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { SearchTrainsComponent } from './search-trains/search-trains.component';
+import { BookTrainsComponent } from './book-trains/book-trains.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    SearchTrainsComponent
+    SearchTrainsComponent,
+    BookTrainsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -21,6 +23,8 @@ import { SearchTrainsComponent } from './search-trains/search-trains.component';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: SearchTrainsComponent, pathMatch: 'full' },
+      { path: 'search-trains', component: SearchTrainsComponent },
+      { path: 'book-trains/:trainId', component: BookTrainsComponent },
     ])
   ],
   providers: [],

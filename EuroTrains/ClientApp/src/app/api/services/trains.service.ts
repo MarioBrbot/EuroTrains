@@ -9,6 +9,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { findTrains } from '../fn/trains/find-trains';
+import { FindTrains$Params } from '../fn/trains/find-trains';
+import { findTrains$Plain } from '../fn/trains/find-trains-plain';
+import { FindTrains$Plain$Params } from '../fn/trains/find-trains-plain';
 import { searchTrains } from '../fn/trains/search-trains';
 import { SearchTrains$Params } from '../fn/trains/search-trains';
 import { searchTrains$Plain } from '../fn/trains/search-trains-plain';
@@ -65,6 +69,53 @@ export class TrainsService extends BaseService {
   searchTrains(params?: SearchTrains$Params, context?: HttpContext): Observable<Array<TrainsRm>> {
     return this.searchTrains$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<TrainsRm>>): Array<TrainsRm> => r.body)
+    );
+  }
+
+  /** Path part for operation `findTrains()` */
+  static readonly FindTrainsPath = '/Trains/{id}';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `findTrains$Plain()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findTrains$Plain$Response(params: FindTrains$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<TrainsRm>> {
+    return findTrains$Plain(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `findTrains$Plain$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findTrains$Plain(params: FindTrains$Plain$Params, context?: HttpContext): Observable<TrainsRm> {
+    return this.findTrains$Plain$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TrainsRm>): TrainsRm => r.body)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `findTrains()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findTrains$Response(params: FindTrains$Params, context?: HttpContext): Observable<StrictHttpResponse<TrainsRm>> {
+    return findTrains(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `findTrains$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  findTrains(params: FindTrains$Params, context?: HttpContext): Observable<TrainsRm> {
+    return this.findTrains$Response(params, context).pipe(
+      map((r: StrictHttpResponse<TrainsRm>): TrainsRm => r.body)
     );
   }
 
