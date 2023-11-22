@@ -50,7 +50,8 @@
         <div class="input-group-text">For</div>
         <input type="number" class="form-control" placeholder="1"/>
         <div class="input-group-text">Passengers</div>
-        <button type="submit" class="btn-primary btn">
+
+        <button (click)="search()" type="submit" class="btn-primary btn">
           <i class="fas fa-search"></i>
         </button>
       </div>
@@ -85,18 +86,18 @@
 
             <div class="col">
               <i class="fa-solid fa-location-dot">
-                {{train.departure.place}}
+                {{train.departure?.place}}
               </i>
             </div>
 
             <div class="col m-2">
               <i class="fa-regular"></i>
-              {{train.departure.time | date }}
+              {{train.departure?.time | date }}
             </div>
 
             <div class="col">
               <i class="fa-regular fa-clock"></i>
-              {{train.departure.time | date:'shortTime' }}
+              {{train.departure?.time | date:'shortTime' }}
             </div>
 
 
@@ -124,18 +125,18 @@
 
             <div class="col">
               <i class="fa-solid fa-location-dot">
-                {{train.arrival.place}}
+                {{train.arrival?.place}}
               </i>
             </div>
 
             <div class="col m-2">
               <i class="fa-regular"></i>
-              {{train.arrival.time | date }}
+              {{train.arrival?.time | date }}
             </div>
 
             <div class="col">
               <i class="fa-regular fa-clock"></i>
-              {{train.arrival.time | date:'shortTime' }}
+              {{train.arrival?.time | date:'shortTime' }}
             </div>
           </div>
 

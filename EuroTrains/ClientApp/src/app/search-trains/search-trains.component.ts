@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Time } from '@angular/common';
+import { TrainsService } from './../api/services/trains.service'
+import { TrainsRm } from '../api/models';
 
 @Component({
   selector: 'app-search-trains',
@@ -7,48 +10,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SearchTrainsComponent implements OnInit {
 
-  searchResult: TrainsRm[] = [
-    {
-      company: "Hrvatske Željeznice",
-      remainingNumberOfSeats: 400,
-      departure: { time: Date.now().toString(), place: "Zagreb" },
-      arrival: { time: Date.now().toString(), place: "Osijek" },
-      price: "40",
-    },
-    {
-      company: "Hekurudha Shqiptare",
-      remainingNumberOfSeats: 60,
-      departure: { time: Date.now().toString(), place: "Tirana" },
-      arrival: { time: Date.now().toString(), place: "Zagreb" },
-      price: "60",
-    },
-    {
-      company: "Österreichische Bundesbahnen",
-      remainingNumberOfSeats: 60,
-      departure: { time: Date.now().toString(), place: "Vienna" },
-      arrival: { time: Date.now().toString(), place: "Zagreb" },
-      price: "60",
-    },
-  ]
+  searchResult: TrainsRm[] = []
 
 
-  constructor() { }
+  constructor(private trainsService: TrainsService) { }
 
   ngOnInit(): void {
   }
 
+  search() {
+    this.trainsService.searchTrains({})
+      .subscribe(response => this.searchResult = response,
+        this.handleError)
+  }
+
+  private handleError(err: any) {
+    console.log(err)
+  }
+
+
 }
 
 
-export interface TrainsRm {
-  company: string;
-  arrival: TimePlaceRm;
-  departure: TimePlaceRm;
-  price: string;
-  remainingNumberOfSeats: number;
-}
-
-export interface TimePlaceRm {
-  place: string;
-  time: string;
-}
