@@ -9,6 +9,8 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
+import { bookTrains } from '../fn/trains/book-trains';
+import { BookTrains$Params } from '../fn/trains/book-trains';
 import { findTrains } from '../fn/trains/find-trains';
 import { FindTrains$Params } from '../fn/trains/find-trains';
 import { findTrains$Plain } from '../fn/trains/find-trains-plain';
@@ -69,6 +71,31 @@ export class TrainsService extends BaseService {
   searchTrains(params?: SearchTrains$Params, context?: HttpContext): Observable<Array<TrainsRm>> {
     return this.searchTrains$Response(params, context).pipe(
       map((r: StrictHttpResponse<Array<TrainsRm>>): Array<TrainsRm> => r.body)
+    );
+  }
+
+  /** Path part for operation `bookTrains()` */
+  static readonly BookTrainsPath = '/Trains';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `bookTrains()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  bookTrains$Response(params?: BookTrains$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+    return bookTrains(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `bookTrains$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  bookTrains(params?: BookTrains$Params, context?: HttpContext): Observable<void> {
+    return this.bookTrains$Response(params, context).pipe(
+      map((r: StrictHttpResponse<void>): void => r.body)
     );
   }
 

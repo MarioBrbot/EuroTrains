@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { TrainsService } from './../api/services/trains.service';
-import { TrainsRm } from '../api/models'
+import { BookDto, TrainsRm } from '../api/models'
 import { AuthService } from '../auth/auth.service';
+import { FormBuilder } from '@angular/forms';
+
 
 @Component({
   selector: 'app-book-trains',
@@ -17,7 +19,13 @@ export class BookTrainsComponent implements OnInit {
   constructor(private route: ActivatedRoute,
     private router: Router,
     private trainsService: TrainsService,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private fb: FormBuilder) { }
+
+
+  form = this.fb.group({
+    number: [1]
+  })
 
   ngOnInit(): void {
     if (!this.authService.currentUser)
@@ -40,10 +48,25 @@ export class BookTrainsComponent implements OnInit {
 
     if (err.Status == 404) {
       alert("Train not found!");
-      this.router.navigate(['/search-flights'])
+      this.router.navigate(['/search-trains'])
     }
     console.log("Response Error. Status: ", err.status);
     console.log("Response Error. Status Text: ", err.statusText);
     console.log(err)
+  }
+
+  book() {
+    console.log(`Booking ${this.form.get('number')?.value} passengers for the train: ${this.train.id}`)
+
+    const booking: BookDto = {
+      trainId: this.train.id,
+      passengerEmail: this.authService.currentUser?.email,
+      numberOfSeats: this.form.get('number')?.value as number
+    }
+
+    this.trainsService.bookTrains({ body: booking })
+      .subscribe(_ => this.router.navigate(['/my-booking']),
+        this.handleError)
+
   }
 }

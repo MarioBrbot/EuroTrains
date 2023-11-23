@@ -1,6 +1,7 @@
 ﻿using EuroTrains.ReadModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using EuroTrains.Dtos;
 
 namespace EuroTrains.Controllers
 {
@@ -63,8 +64,9 @@ namespace EuroTrains.Controllers
                         new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
                         random.Next(1, 853))
         };
-    
 
+
+        static private IList<BookDto> Bookings = new List<BookDto>();
 
         public TrainsController(ILogger<TrainsController> logger)
         {
@@ -96,7 +98,26 @@ namespace EuroTrains.Controllers
             return Ok(train);
 
         }
-       
+
+
+        [HttpPost]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(200)]
+        public IActionResult Book(BookDto dto)
+        {
+            System.Diagnostics.Debug.WriteLine($"Booking a new train {dto.TrainId}");
+
+            var trainFound = trains.Any(f => f.Id == dto.TrainId);
+
+            if (trainFound == false)
+                return NotFound();
+
+            Bookings.Add(dto);
+            return CreatedAtAction(nameof(Find), new { id = dto.TrainId });
+        }
+
 
 
 

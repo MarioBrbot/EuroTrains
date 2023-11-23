@@ -9,6 +9,7 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { SearchTrainsComponent } from './search-trains/search-trains.component';
 import { BookTrainsComponent } from './book-trains/book-trains.component';
 import { RegisterPassengerComponent } from './register-passenger/register-passenger.component';
+import { MyBookingsComponent } from './my-bookings/my-bookings.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { RegisterPassengerComponent } from './register-passenger/register-passen
     NavMenuComponent,
     SearchTrainsComponent,
     BookTrainsComponent,
-    RegisterPassengerComponent
+    RegisterPassengerComponent,
+    MyBookingsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -29,6 +31,7 @@ import { RegisterPassengerComponent } from './register-passenger/register-passen
       { path: 'search-trains', component: SearchTrainsComponent },
       { path: 'book-trains/:trainId', component: BookTrainsComponent },
       { path: 'register-passenger', component: RegisterPassengerComponent },
+      { path: 'my-booking', component: MyBookingsComponent },
     ])
   ],
   providers: [],
