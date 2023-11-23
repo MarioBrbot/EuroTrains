@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using EuroTrains.Dtos;
+using EuroTrains.Domain.Entities;
+using System.Diagnostics;
 
 namespace EuroTrains.Controllers
 {
@@ -13,60 +15,59 @@ namespace EuroTrains.Controllers
 
         static Random random = new Random();
 
-        static private TrainsRm[] trains = new TrainsRm[]
+        static private Trains[] trains = new Trains[]
         {
                 new (   Guid.NewGuid(),
                         "Hrvatske Željeznice",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(1, 3))),
-                        new TimePlaceRm("Sisak",DateTime.Now.AddHours(random.Next(4, 10))),
+                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(1, 3))),
+                        new TimePlace("Sisak",DateTime.Now.AddHours(random.Next(4, 10))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Hekurudha Shqiptare",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Tirana",DateTime.Now.AddHours(random.Next(1, 10))),
-                        new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(4, 15))),
+                        new TimePlace("Tirana",DateTime.Now.AddHours(random.Next(1, 10))),
+                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 15))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Österreichische Bundesbahnen",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
-                        new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(4, 18))),
+                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
+                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 18))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Hrvatske Željeznice",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Osijek",DateTime.Now.AddHours(random.Next(1, 21))),
-                        new TimePlaceRm("Koprivnica",DateTime.Now.AddHours(random.Next(4, 21))),
+                        new TimePlace("Osijek",DateTime.Now.AddHours(random.Next(1, 21))),
+                        new TimePlace("Koprivnica",DateTime.Now.AddHours(random.Next(4, 21))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Hekurudha Shqiptare",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Tirana",DateTime.Now.AddHours(random.Next(1, 23))),
-                        new TimePlaceRm("Vienna",DateTime.Now.AddHours(random.Next(4, 25))),
+                        new TimePlace("Tirana",DateTime.Now.AddHours(random.Next(1, 23))),
+                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(4, 25))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Österreichische Bundesbahnen",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
-                        new TimePlaceRm("Graz",DateTime.Now.AddHours(random.Next(4, 19))),
+                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
+                        new TimePlace("Graz",DateTime.Now.AddHours(random.Next(4, 19))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Österreichische Bundesbahnen",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Vienna",DateTime.Now.AddHours(random.Next(1, 55))),
-                        new TimePlaceRm("Ljubljana",DateTime.Now.AddHours(random.Next(4, 58))),
+                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 55))),
+                        new TimePlace("Ljubljana",DateTime.Now.AddHours(random.Next(4, 58))),
                         random.Next(1, 853)),
                 new (   Guid.NewGuid(),
                         "Österreichische Bundesbahnen",
                         random.Next(90, 5000).ToString(),
-                        new TimePlaceRm("Salzburg",DateTime.Now.AddHours(random.Next(1, 58))),
-                        new TimePlaceRm("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
+                        new TimePlace("Salzburg",DateTime.Now.AddHours(random.Next(1, 58))),
+                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
                         random.Next(1, 853))
         };
 
-
-        static private IList<BookDto> Bookings = new List<BookDto>();
+        
 
         public TrainsController(ILogger<TrainsController> logger)
         {
@@ -79,7 +80,18 @@ namespace EuroTrains.Controllers
         [ProducesResponseType(500)]
         [ProducesResponseType(typeof(IEnumerable<TrainsRm>), 200)]
         public IEnumerable<TrainsRm> Search()
-            => trains;
+        {
+            var trainsRmList = trains.Select(train => new TrainsRm(
+            train.Id,
+            train.Company,
+            train.Price,
+            new TimePlaceRm(train.Departure.Place.ToString(), train.Departure.Time),
+            new TimePlaceRm(train.Arrival.Place.ToString(), train.Arrival.Time),
+            train.RemainingNumberOfSeats
+            ));
+
+            return trainsRmList;
+        }
 
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
@@ -95,7 +107,16 @@ namespace EuroTrains.Controllers
                 return NotFound();
             }
 
-            return Ok(train);
+            var readModel = new TrainsRm(
+                train.Id,
+                train.Company,
+                train.Price,
+                new TimePlaceRm(train.Departure.Place.ToString(), train.Departure.Time),
+                new TimePlaceRm(train.Arrival.Place.ToString(), train.Arrival.Time),
+                train.RemainingNumberOfSeats
+                );
+
+            return Ok(readModel);
 
         }
 
@@ -109,12 +130,17 @@ namespace EuroTrains.Controllers
         {
             System.Diagnostics.Debug.WriteLine($"Booking a new train {dto.TrainId}");
 
-            var trainFound = trains.Any(f => f.Id == dto.TrainId);
+            var train = trains.SingleOrDefault(f => f.Id == dto.TrainId);
 
-            if (trainFound == false)
+            if (train == null)
                 return NotFound();
 
-            Bookings.Add(dto);
+            train.Bookings.Add(
+                new Booking(
+                    dto.TrainId,
+                    dto.PassengerEmail,
+                    dto.NumberOfSeats)
+                );
             return CreatedAtAction(nameof(Find), new { id = dto.TrainId });
         }
 
