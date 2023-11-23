@@ -3,7 +3,7 @@ import { ActivatedRoute,Router } from '@angular/router';
 import { TrainsService } from './../api/services/trains.service';
 import { BookDto, TrainsRm } from '../api/models'
 import { AuthService } from '../auth/auth.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 
 
 @Component({
@@ -24,7 +24,7 @@ export class BookTrainsComponent implements OnInit {
 
 
   form = this.fb.group({
-    number: [1]
+    number: [1, Validators.compose([Validators.required, Validators.min(1), Validators.max(254)])]
   })
 
   ngOnInit(): void {
@@ -56,6 +56,9 @@ export class BookTrainsComponent implements OnInit {
   }
 
   book() {
+    if (this.form.invalid)
+      return;
+
     console.log(`Booking ${this.form.get('number')?.value} passengers for the train: ${this.train.id}`)
 
     const booking: BookDto = {
@@ -67,6 +70,9 @@ export class BookTrainsComponent implements OnInit {
     this.trainsService.bookTrains({ body: booking })
       .subscribe(_ => this.router.navigate(['/my-booking']),
         this.handleError)
+  }
 
+  get number() {
+    return this.form.controls.number
   }
 }
