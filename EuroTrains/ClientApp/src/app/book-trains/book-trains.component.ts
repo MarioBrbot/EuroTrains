@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute,Router } from '@angular/router';
 import { TrainsService } from './../api/services/trains.service';
 import { TrainsRm } from '../api/models'
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-book-trains',
@@ -15,9 +16,13 @@ export class BookTrainsComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
-    private trainsService: TrainsService){ }
+    private trainsService: TrainsService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
+    if (!this.authService.currentUser)
+      this.router.navigate(['/register-passenger'])
+
     this.route.paramMap
       .subscribe(p => this.findTrain(p.get("trainId")))
   }

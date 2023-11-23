@@ -4,9 +4,8 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-
-import { TrainsService } from './services/trains.service';
 import { PassengerService } from './services/passenger.service';
+import { TrainsService } from './services/trains.service';
 
 /**
  * Module that provides all services and configuration.
@@ -16,8 +15,8 @@ import { PassengerService } from './services/passenger.service';
   exports: [],
   declarations: [],
   providers: [
-    TrainsService,
     PassengerService,
+    TrainsService,
     ApiConfiguration
   ],
 })
