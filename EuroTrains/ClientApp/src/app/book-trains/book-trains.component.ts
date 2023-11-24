@@ -50,6 +50,12 @@ export class BookTrainsComponent implements OnInit {
       alert("Train not found!");
       this.router.navigate(['/search-trains'])
     }
+
+    if (err.status == 409) {
+      console.log("err: " + err);
+      alert(JSON.parse(err.error).message)
+    }
+
     console.log("Response Error. Status: ", err.status);
     console.log("Response Error. Status Text: ", err.statusText);
     console.log(err)

@@ -4,6 +4,7 @@ using System;
 using EuroTrains.Dtos;
 using EuroTrains.Domain.Entities;
 using System.Diagnostics;
+using EuroTrains.Domain.Errors;
 
 namespace EuroTrains.Controllers
 {
@@ -22,7 +23,7 @@ namespace EuroTrains.Controllers
                         random.Next(90, 5000).ToString(),
                         new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(1, 3))),
                         new TimePlace("Sisak",DateTime.Now.AddHours(random.Next(4, 10))),
-                        random.Next(1, 853)),
+                        2),
                 new (   Guid.NewGuid(),
                         "Hekurudha Shqiptare",
                         random.Next(90, 5000).ToString(),
@@ -135,12 +136,11 @@ namespace EuroTrains.Controllers
             if (train == null)
                 return NotFound();
 
-            train.Bookings.Add(
-                new Booking(
-                    dto.TrainId,
-                    dto.PassengerEmail,
-                    dto.NumberOfSeats)
-                );
+            var error = train.MakeBooking(dto.PassengerEmail, dto.NumberOfSeats);
+
+            if (error is OverbookError)
+                return Conflict(new { message = "Not enough seats." });
+
             return CreatedAtAction(nameof(Find), new { id = dto.TrainId });
         }
 
