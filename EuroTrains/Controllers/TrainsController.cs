@@ -5,6 +5,7 @@ using EuroTrains.Dtos;
 using EuroTrains.Domain.Entities;
 using System.Diagnostics;
 using EuroTrains.Domain.Errors;
+using EuroTrains.Data;
 
 namespace EuroTrains.Controllers
 {
@@ -14,65 +15,18 @@ namespace EuroTrains.Controllers
     {
         private readonly ILogger<TrainsController> _logger;
 
-        static Random random = new Random();
 
-        static private Trains[] trains = new Trains[]
-        {
-                new (   Guid.NewGuid(),
-                        "Hrvatske Željeznice",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(1, 3))),
-                        new TimePlace("Sisak",DateTime.Now.AddHours(random.Next(4, 10))),
-                        2),
-                new (   Guid.NewGuid(),
-                        "Hekurudha Shqiptare",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Tirana",DateTime.Now.AddHours(random.Next(1, 10))),
-                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 15))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Österreichische Bundesbahnen",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
-                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 18))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Hrvatske Željeznice",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Osijek",DateTime.Now.AddHours(random.Next(1, 21))),
-                        new TimePlace("Koprivnica",DateTime.Now.AddHours(random.Next(4, 21))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Hekurudha Shqiptare",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Tirana",DateTime.Now.AddHours(random.Next(1, 23))),
-                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(4, 25))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Österreichische Bundesbahnen",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 15))),
-                        new TimePlace("Graz",DateTime.Now.AddHours(random.Next(4, 19))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Österreichische Bundesbahnen",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Vienna",DateTime.Now.AddHours(random.Next(1, 55))),
-                        new TimePlace("Ljubljana",DateTime.Now.AddHours(random.Next(4, 58))),
-                        random.Next(1, 853)),
-                new (   Guid.NewGuid(),
-                        "Österreichische Bundesbahnen",
-                        random.Next(90, 5000).ToString(),
-                        new TimePlace("Salzburg",DateTime.Now.AddHours(random.Next(1, 58))),
-                        new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
-                        random.Next(1, 853))
-        };
 
-        
 
-        public TrainsController(ILogger<TrainsController> logger)
+
+        private readonly Entities _entities;
+
+
+        public TrainsController(ILogger<TrainsController> logger,
+            Entities entities)
         {
             _logger = logger;
+            _entities = entities;
         }
 
 
@@ -82,7 +36,7 @@ namespace EuroTrains.Controllers
         [ProducesResponseType(typeof(IEnumerable<TrainsRm>), 200)]
         public IEnumerable<TrainsRm> Search()
         {
-            var trainsRmList = trains.Select(train => new TrainsRm(
+            var trainsRmList = _entities.Trains.Select(train => new TrainsRm(
             train.Id,
             train.Company,
             train.Price,
@@ -101,7 +55,7 @@ namespace EuroTrains.Controllers
         [ProducesResponseType(typeof(TrainsRm), 200)]
         public ActionResult<TrainsRm> Find(Guid id)
         {
-            var train = trains.SingleOrDefault(f => f.Id == id);
+            var train = _entities.Trains.SingleOrDefault(f => f.Id == id);
 
             if (train == null )
             {
@@ -131,7 +85,7 @@ namespace EuroTrains.Controllers
         {
             System.Diagnostics.Debug.WriteLine($"Booking a new train {dto.TrainId}");
 
-            var train = trains.SingleOrDefault(f => f.Id == dto.TrainId);
+            var train = _entities.Trains.SingleOrDefault(f => f.Id == dto.TrainId);
 
             if (train == null)
                 return NotFound();
