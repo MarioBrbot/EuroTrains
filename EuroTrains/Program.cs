@@ -1,12 +1,21 @@
 using Microsoft.OpenApi.Models;
 using EuroTrains.Data;
 using EuroTrains.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+
+// Add db context
+builder.Services.AddDbContext<Entities>(options =>
+options.UseInMemoryDatabase(databaseName: "EuroTrains"),
+ServiceLifetime.Singleton);
+
+
+
 builder.Services.AddSwaggerGen( c =>
 {
     c.AddServer(new OpenApiServer
@@ -77,6 +86,7 @@ Trains[] trainsToSeed = new Trains[]
 };
 entities.Trains.AddRange(trainsToSeed);
 
+entities.SaveChanges();
 
 app.UseCors(builder => builder
     .WithOrigins("*")

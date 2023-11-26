@@ -1,10 +1,25 @@
 ﻿using EuroTrains.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EuroTrains.Data
 {
-    public class Entities
+    public class Entities : DbContext
     {
-        public IList<Passenger> Passengers = new List<Passenger>();
-        public List<Trains> Trains = new List<Trains>();
+
+        public DbSet<Passenger> Passengers => Set<Passenger>();
+        public DbSet<Trains> Trains => Set<Trains>();
+
+        public Entities(DbContextOptions<Entities> options) : base(options)
+        {
+
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Passenger>().HasKey(p => p.Email);
+
+            modelBuilder.Entity<Trains>().OwnsOne(f => f.Departure);
+            modelBuilder.Entity<Trains>().OwnsOne(f => f.Arrival);
+        }
     }
 }

@@ -95,6 +95,8 @@ namespace EuroTrains.Controllers
             if (error is OverbookError)
                 return Conflict(new { message = "Not enough seats." });
 
+            _entities.SaveChanges();
+
             return CreatedAtAction(nameof(Find), new { id = dto.TrainId });
         }
 

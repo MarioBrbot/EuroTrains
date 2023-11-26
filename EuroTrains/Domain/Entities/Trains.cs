@@ -2,17 +2,38 @@
 
 namespace EuroTrains.Domain.Entities
 {
-    public record Trains(
-        Guid Id,
-        string Company,
-        string Price,
-        TimePlace Departure,
-        TimePlace Arrival,
-        int RemainingNumberOfSeats
-        )
-    { 
+    public class Trains {
+        public Guid Id { get; set; }
+        public string Company { get; set; }
+        public string Price { get; set; }
+        public TimePlace Departure { get; set; }
+        public TimePlace Arrival { get; set; }
+        public int RemainingNumberOfSeats { get; set; }
+
         public IList<Booking> Bookings = new List<Booking>();
-        public int RemainingNumberOfSeats { get; set; } = RemainingNumberOfSeats;
+
+        public Trains() { }
+
+
+        public Trains(
+         Guid id,
+         string company,
+         string price,
+         TimePlace departure,
+         TimePlace arrival,
+         int remainingNumberOfSeats
+        )
+        {
+            Id = id;
+            Company = company;
+            Price = price;
+            Departure = departure;
+            Arrival = arrival;
+            RemainingNumberOfSeats = remainingNumberOfSeats;
+        }
+
+   
+
 
         public object? MakeBooking(string passengerEmail, byte numberOfSeats)
         {
@@ -32,5 +53,5 @@ namespace EuroTrains.Domain.Entities
             train.RemainingNumberOfSeats -= numberOfSeats;
             return null;
         }
-    }    
+    }
 }
