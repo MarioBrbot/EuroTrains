@@ -6,6 +6,7 @@ using EuroTrains.Domain.Entities;
 using System.Diagnostics;
 using EuroTrains.Domain.Errors;
 using EuroTrains.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace EuroTrains.Controllers
 {
@@ -95,7 +96,14 @@ namespace EuroTrains.Controllers
             if (error is OverbookError)
                 return Conflict(new { message = "Not enough seats." });
 
-            _entities.SaveChanges();
+            try
+            {
+                _entities.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return Conflict(new { message = "An error occurred while booking. Please try again." });
+            }
 
             return CreatedAtAction(nameof(Find), new { id = dto.TrainId });
         }
