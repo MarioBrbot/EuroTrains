@@ -23,6 +23,8 @@ namespace EuroTrains.Data
 
             modelBuilder.Entity<Trains>().OwnsOne(f => f.Departure);
             modelBuilder.Entity<Trains>().OwnsOne(f => f.Arrival);
+
+            modelBuilder.Entity<Trains>().OwnsMany(f => f.Bookings);
         }
     }
 }

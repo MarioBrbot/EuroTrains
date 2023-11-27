@@ -11,8 +11,7 @@ builder.Services.AddControllersWithViews();
 
 // Add db context
 builder.Services.AddDbContext<Entities>(options =>
-options.UseInMemoryDatabase(databaseName: "EuroTrains"),
-ServiceLifetime.Singleton);
+options.UseSqlServer(builder.Configuration.GetConnectionString("EuroTrains")));
 
 
 
@@ -27,13 +26,18 @@ builder.Services.AddSwaggerGen( c =>
     c.CustomOperationIds(e => $"{e.ActionDescriptor.RouteValues["action"] + e.ActionDescriptor.RouteValues["controller"]}");
 });
 
-builder.Services.AddSingleton<Entities>();
+builder.Services.AddScoped<Entities>();
 
 var app = builder.Build();
 
 var entities = app.Services.CreateScope().ServiceProvider.GetService<Entities>();
+
+entities.Database.EnsureCreated();
+
 var random = new Random();
-Trains[] trainsToSeed = new Trains[]
+if (!entities.Trains.Any())
+{
+    Trains[] trainsToSeed = new Trains[]
     {
                 new (   Guid.NewGuid(),
                         "Hrvatske Željeznice",
@@ -84,10 +88,9 @@ Trains[] trainsToSeed = new Trains[]
                         new TimePlace("Zagreb",DateTime.Now.AddHours(random.Next(4, 60))),
                         random.Next(1, 853))
 };
-entities.Trains.AddRange(trainsToSeed);
-
-entities.SaveChanges();
-
+    entities.Trains.AddRange(trainsToSeed);
+    entities.SaveChanges();
+}
 app.UseCors(builder => builder
     .WithOrigins("*")
     .AllowAnyMethod()
