@@ -35,9 +35,32 @@ namespace EuroTrains.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         [ProducesResponseType(typeof(IEnumerable<TrainsRm>), 200)]
-        public IEnumerable<TrainsRm> Search()
+        public IEnumerable<TrainsRm> Search([FromQuery] TrainsSearchParameters @params)
         {
-            var trainsRmList = _entities.Trains.Select(train => new TrainsRm(
+            _logger.LogInformation("Searching for trains for: {Destination}", @params.Destination);
+
+            IQueryable<Trains> trains = _entities.Trains;
+
+            if (!string.IsNullOrWhiteSpace(@params.Destination))
+                trains = trains.Where(f => f.Arrival.Place.Contains(@params.Destination));
+
+            if (!string.IsNullOrWhiteSpace(@params.From))
+                trains = trains.Where(f => f.Departure.Place.Contains(@params.From));
+
+            if (@params.FromDate != null)
+                trains = trains.Where(f => f.Departure.Time >= @params.FromDate.Value.Date);
+
+            if (@params.ToDate != null)
+                trains = trains.Where(f => f.Departure.Time >= @params.ToDate.Value.Date.AddDays(1).AddTicks(-1));
+
+            if (@params.NumberOfPassengers != 0 && @params.NumberOfPassengers != null)
+                trains = trains.Where(f => f.RemainingNumberOfSeats >= @params.NumberOfPassengers);
+            else
+                trains = trains.Where(f => f.RemainingNumberOfSeats >= 1);
+
+
+            var trainsRmList = trains
+                .Select(train => new TrainsRm(
             train.Id,
             train.Company,
             train.Price,

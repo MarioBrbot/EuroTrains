@@ -17,6 +17,8 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("EuroTrains")));
 
 builder.Services.AddSwaggerGen( c =>
 {
+    c.DescribeAllParametersInCamelCase();
+
     c.AddServer(new OpenApiServer
     {
         Description = "Development Server",
