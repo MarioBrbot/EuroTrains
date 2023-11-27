@@ -28,8 +28,6 @@ export class BookTrainsComponent implements OnInit {
   })
 
   ngOnInit(): void {
-    if (!this.authService.currentUser)
-      this.router.navigate(['/register-passenger'])
 
     this.route.paramMap
       .subscribe(p => this.findTrain(p.get("trainId")))
