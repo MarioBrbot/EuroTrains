@@ -25,13 +25,24 @@ namespace EuroTrains.Controllers
             [ProducesResponseType(500)]
             public IActionResult Register(NewPassengerDto dto)
             {
-            _entities.Passengers.Add(new Passenger(
-                    dto.Email,
-                    dto.FirstName,
-                    dto.LastName,
-                    dto.Gender
-                    ));
-            _entities.SaveChanges();
+            if (_entities.Passengers.Contains(new Passenger(
+                        dto.Email,
+                        dto.FirstName,
+                        dto.LastName,
+                        dto.Gender
+                        )))
+            {
+            }
+            else
+            {
+                _entities.Passengers.Add(new Passenger(
+                        dto.Email,
+                        dto.FirstName,
+                        dto.LastName,
+                        dto.Gender
+                        ));
+                _entities.SaveChanges();
+            }
 
             return CreatedAtAction(nameof(Find), new { email = dto.Email });
             }

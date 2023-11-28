@@ -60,7 +60,7 @@ export class RegisterPassengerComponent implements OnInit {
   }
 
   private login = () => {
-    this.authService.loginUser({ email: this.form.get('email')?.value as string })
+    this.authService.loginUser({ email: this.form.get('email')?.value as string, fullName: this.form.get('firstName')?.value as string + ' ' + this.form.get('lastName')?.value })
     this.router.navigate([this.requestedUrl ?? '/search-flights'])
   }
 

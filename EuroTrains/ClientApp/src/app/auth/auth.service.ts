@@ -12,6 +12,7 @@ export class AuthService {
 
   loginUser(user: User) {
     console.log("Log in the user with email " + user.email);
+
     this.currentUser = user
 
   }
@@ -19,4 +20,5 @@ export class AuthService {
 
 interface User {
   email: string;
+  fullName: string;
 }
